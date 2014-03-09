@@ -1,3 +1,6 @@
+# Tag files
+*.tag*
+*.tag
 # Object files
 *.o
 *.ko
