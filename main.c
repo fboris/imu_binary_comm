@@ -5,9 +5,11 @@
 #include "usart.h"
 #include <stdio.h>
 #include "comm.h"
-void delay(uint32_t delay_count)
-{
-	while (delay_count) delay_count--;
+volatile uint32_t GLOBAL_DELAY_COUNT=0;
+void delay_ms(uint32_t delay_count)
+{	
+	GLOBAL_DELAY_COUNT = delay_count;
+	while (GLOBAL_DELAY_COUNT!=0);
 }
 void init_led()
 {
@@ -20,6 +22,37 @@ void init_led()
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+void init_tim2()
+{	
+	RCC_PCLK1Config(RCC_HCLK_Div2);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+
+	/* Enable the TIM2 global Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+
+	NVIC_Init(&NVIC_InitStructure);
+
+	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+	/* Time base configuration */
+	TIM_TimeBaseStructure.TIM_Period =(uint16_t) 10-1;
+	TIM_TimeBaseStructure.TIM_Prescaler = (uint16_t)7200-1;
+
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+
+	// /* Prescaler configuration */
+	// TIM_PrescalerConfig(TIM2, PrescalerValue, TIM_PSCReloadMode_Immediate);
+
+	TIM_ITConfig( TIM2, TIM_IT_Update, ENABLE);
+	TIM_Cmd(TIM2, ENABLE);
 }
 void gpio_toggle(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
@@ -70,6 +103,7 @@ int main(void)
 	init_usart1();
 	MPU6050_I2C_Init();
 	MPU6050_Initialize();
+	init_tim2();
 	if( MPU6050_TestConnection() == TRUE)
 	{
 	   puts("connection success\r\n");
@@ -91,7 +125,7 @@ int main(void)
 			send_byte( bin_buff[i] );
 		gpio_toggle(GPIOA, GPIO_Pin_0);
 		gpio_toggle(GPIOA, GPIO_Pin_1);
-		delay(5000);
+		delay_ms(10);
 
 	}
 }

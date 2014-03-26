@@ -38,7 +38,15 @@
 /******************************************************************************/
 /*            Cortex-M3 Processor Exceptions Handlers                         */
 /******************************************************************************/
+extern uint32_t GLOBAL_DELAY_COUNT;
+void TIM2_IRQHandler()
+{
+        if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET){
 
+                GLOBAL_DELAY_COUNT--;
+                TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+        }
+}
 /**
   * @brief  This function handles NMI exception.
   * @param  None

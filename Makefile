@@ -46,12 +46,14 @@ SRC+=$(ST_LIB)/src/misc.c \
 	$(ST_LIB)/src/stm32f10x_rcc.c \
 	$(ST_LIB)/src/stm32f10x_gpio.c \
 	$(ST_LIB)/src/stm32f10x_i2c.c \
-	$(ST_LIB)/src/stm32f10x_usart.c
+	$(ST_LIB)/src/stm32f10x_usart.c \
+	$(ST_LIB)/src/stm32f10x_tim.c
 #MPU6050 Lib
 SRC+=./MPU6050_lib/MPU6050.c
 #Major programs
 SRC+=./main.c \
 	./usart.c \
+	./stm32f10x_it.c
 
 
 #======================================================================#
