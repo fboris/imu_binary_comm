@@ -6,6 +6,12 @@
 #include <stdio.h>
 #include "comm.h"
 volatile uint32_t GLOBAL_DELAY_COUNT=0;
+extern int16_t GYRO_X_OFFSET;
+extern int16_t GYRO_Y_OFFSET;
+extern int16_t GYRO_Z_OFFSET;
+extern int16_t ACC_X_OFFSET;
+extern int16_t ACC_Y_OFFSET;
+extern int16_t ACC_Z_OFFSET;
 void delay_ms(uint32_t delay_count)
 {	
 	GLOBAL_DELAY_COUNT = delay_count;
@@ -110,16 +116,17 @@ int main(void)
 	}else {
 	   puts("connection failed\r\n");
 	}
+	imu_calibration();
 
 	while (1) {
 		//puts("running now\r\n");
 		MPU6050_GetRawAccelGyro(buff);
-		imu_comm.acc_x = buff[0];
-		imu_comm.acc_y = buff[1];
-		imu_comm.acc_z = buff[2];
-		imu_comm.gyro_x = buff[3];
-		imu_comm.gyro_y = buff[4];
-		imu_comm.gyro_z = buff[5];
+		imu_comm.acc_x = buff[0]-ACC_X_OFFSET;
+		imu_comm.acc_y = buff[1]-ACC_Y_OFFSET;
+		imu_comm.acc_z = buff[2]-ACC_Z_OFFSET;
+		imu_comm.gyro_x = buff[3]-GYRO_X_OFFSET;
+		imu_comm.gyro_y = buff[4]-GYRO_Y_OFFSET;
+		imu_comm.gyro_z = buff[5]-GYRO_Z_OFFSET;
 		generate_package( &imu_comm, &bin_buff[0]);
 		for (int i = 0 ; i<13 ; i++)
 			send_byte( bin_buff[i] );
