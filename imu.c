@@ -38,7 +38,7 @@ void imu_calibration()
 		//delay_ms(1);
 
 	}
-	ACC_Z_OFFSET += -16384;
+	ACC_X_OFFSET += 16384;
 
 	gpio_toggle(GPIOA, GPIO_Pin_0);
 	delay_ms(500);
