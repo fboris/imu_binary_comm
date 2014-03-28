@@ -25,7 +25,7 @@ void imu_calibration()
 	int16_t buff[6];
 	int16_t acc_fifo[3][FILTER_SIZE];
 	int16_t gyro_fifo[3][FILTER_SIZE];
-	int16_t count = FILTER_SIZE*10;
+	int16_t count = FILTER_SIZE*5;
 	while( count--)
 	{
 		MPU6050_GetRawAccelGyro(buff);
@@ -41,11 +41,11 @@ void imu_calibration()
 	ACC_X_OFFSET += 16384;
 
 	gpio_toggle(GPIOA, GPIO_Pin_0);
-	delay_ms(500);
+	delay_ms(200);
 	gpio_toggle(GPIOA, GPIO_Pin_0);
-	delay_ms(500);
+	delay_ms(200);
 	gpio_toggle(GPIOA, GPIO_Pin_0);
-	delay_ms(500);
+	delay_ms(200);
 	gpio_toggle(GPIOA, GPIO_Pin_0);
-	delay_ms(500);
+	delay_ms(200);
 }
