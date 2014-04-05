@@ -132,7 +132,7 @@ int main(void)
 			send_byte( bin_buff[i] );
 		gpio_toggle(GPIOA, GPIO_Pin_0);
 		gpio_toggle(GPIOA, GPIO_Pin_1);
-		delay_ms(10);
+		
 
 	}
 }
