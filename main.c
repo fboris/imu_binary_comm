@@ -1,4 +1,5 @@
 #include "bool.h"
+#include "bool.h"
 #include "stm32f10x.h"
 #include "stm32f10x_conf.h"
 #include "MPU6050.h"
@@ -12,6 +13,7 @@ extern int16_t GYRO_Z_OFFSET;
 extern int16_t ACC_X_OFFSET;
 extern int16_t ACC_Y_OFFSET;
 extern int16_t ACC_Z_OFFSET;
+extern uint8_t TxBuffer[13];
 void delay_ms(uint32_t delay_count)
 {	
 	GLOBAL_DELAY_COUNT = delay_count;
@@ -90,13 +92,13 @@ void *memcpy(void *dest, const void *src, size_t n)
 }
 void generate_package(comm_package* pack, uint8_t* buff)
 {
-	memcpy( &(buff[0]), &(pack->acc_x), sizeof(int16_t) );
-	memcpy( &(buff[2]), &(pack->acc_y), sizeof(int16_t) );
-	memcpy( &(buff[4]), &(pack->acc_z), sizeof(int16_t) );
-	memcpy( &(buff[6]), &(pack->gyro_x), sizeof(int16_t) );
-	memcpy( &(buff[8]), &(pack->gyro_y), sizeof(int16_t) );
-	memcpy( &(buff[10]), &(pack->gyro_z), sizeof(int16_t) );
-	memcpy( &(buff[12]), &(pack->header), sizeof(uint8_t));
+	memcpy( &(TxBuffer[0]), &(pack->acc_x), sizeof(int16_t) );
+	memcpy( &(TxBuffer[2]), &(pack->acc_y), sizeof(int16_t) );
+	memcpy( &(TxBuffer[4]), &(pack->acc_z), sizeof(int16_t) );
+	memcpy( &(TxBuffer[6]), &(pack->gyro_x), sizeof(int16_t) );
+	memcpy( &(TxBuffer[8]), &(pack->gyro_y), sizeof(int16_t) );
+	memcpy( &(TxBuffer[10]), &(pack->gyro_z), sizeof(int16_t) );
+	memcpy( &(TxBuffer[12]), &(pack->header), sizeof(uint8_t));
 
 }
 int main(void)
@@ -128,8 +130,7 @@ int main(void)
 		imu_comm.gyro_y = buff[4]-GYRO_Y_OFFSET;
 		imu_comm.gyro_z = buff[5]-GYRO_Z_OFFSET;
 		generate_package( &imu_comm, &bin_buff[0]);
-		for (int i = 0 ; i<13 ; i++)
-			send_byte( bin_buff[i] );
+		delay_ms(1);
 		gpio_toggle(GPIOA, GPIO_Pin_0);
 		gpio_toggle(GPIOA, GPIO_Pin_1);
 		
