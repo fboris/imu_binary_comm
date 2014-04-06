@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stddef.h>
-uint8_t TxBuffer[13];
+uint8_t TxBuffer[14];
 
 void init_usart1()
 {
@@ -59,7 +59,7 @@ void init_usart1()
 	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART1->DR;
 	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)TxBuffer;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-	DMA_InitStructure.DMA_BufferSize = 13;
+	DMA_InitStructure.DMA_BufferSize = 14;
 	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
 	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
@@ -75,7 +75,6 @@ void init_usart1()
 	/* Enable the RS232 port. */
 	USART_Cmd(USART1, ENABLE);
 	while (DMA_GetFlagStatus(DMA1_FLAG_TC4) == RESET){
-		DMA_ClearFlag(DMA1_FLAG_TC4);
 	}
 
 

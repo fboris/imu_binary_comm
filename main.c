@@ -12,7 +12,7 @@ extern int16_t GYRO_Z_OFFSET;
 extern int16_t ACC_X_OFFSET;
 extern int16_t ACC_Y_OFFSET;
 extern int16_t ACC_Z_OFFSET;
-extern uint8_t TxBuffer[13];
+extern uint8_t TxBuffer[14];
 void delay_ms(uint32_t delay_count)
 {	
 	GLOBAL_DELAY_COUNT = delay_count;
@@ -89,21 +89,32 @@ void *memcpy(void *dest, const void *src, size_t n)
 
         return ret;
 }
+uint8_t generate_checksum(uint8_t *data, uint8_t size)
+{	
+	uint8_t chk_sum = 0;
+	for (int i = 1; i<size; i++){
+		chk_sum ^=data[i];
+	}
+	return chk_sum;
+}
 void generate_packet(comm_packet* pack, uint8_t* buff)
 {
-	memcpy( &(TxBuffer[0]), &(pack->acc_x), sizeof(int16_t) );
-	memcpy( &(TxBuffer[2]), &(pack->acc_y), sizeof(int16_t) );
-	memcpy( &(TxBuffer[4]), &(pack->acc_z), sizeof(int16_t) );
-	memcpy( &(TxBuffer[6]), &(pack->gyro_x), sizeof(int16_t) );
-	memcpy( &(TxBuffer[8]), &(pack->gyro_y), sizeof(int16_t) );
-	memcpy( &(TxBuffer[10]), &(pack->gyro_z), sizeof(int16_t) );
-	memcpy( &(TxBuffer[12]), &(pack->header), sizeof(uint8_t));
-
+	memcpy( &(buff[0]), &(pack->header), sizeof(uint8_t));
+	memcpy( &(buff[1]), &(pack->acc_x), sizeof(int16_t) );
+	memcpy( &(buff[3]), &(pack->acc_y), sizeof(int16_t) );
+	memcpy( &(buff[5]), &(pack->acc_z), sizeof(int16_t) );
+	memcpy( &(buff[7]), &(pack->gyro_x), sizeof(int16_t) );
+	memcpy( &(buff[9]), &(pack->gyro_y), sizeof(int16_t) );
+	memcpy( &(buff[11]), &(pack->gyro_z), sizeof(int16_t) );
+	uint8_t chk_sum = generate_checksum( buff, 13);
+	//memcpy( &(buff[13]), &chk_sum, sizeof(uint8_t) );
+	buff[13] = chk_sum;
+	memcpy( TxBuffer, buff , 14);
 }
 int main(void)
 {
 	int16_t buff[6];
-	uint8_t bin_buff[13];
+	uint8_t bin_buff[14];
 	comm_packet imu_comm;
 	imu_comm.header = (uint8_t)'I';
 	init_led();
