@@ -12,7 +12,7 @@ extern int16_t GYRO_Z_OFFSET;
 extern int16_t ACC_X_OFFSET;
 extern int16_t ACC_Y_OFFSET;
 extern int16_t ACC_Z_OFFSET;
-extern uint8_t TxBuffer[14];
+extern uint8_t TxBuffer[COMM_PACKET_SIZE];
 void delay_ms(uint32_t delay_count)
 {	
 	GLOBAL_DELAY_COUNT = delay_count;
@@ -106,15 +106,15 @@ void generate_packet(comm_packet* pack, uint8_t* buff)
 	memcpy( &(buff[7]), &(pack->gyro_x), sizeof(int16_t) );
 	memcpy( &(buff[9]), &(pack->gyro_y), sizeof(int16_t) );
 	memcpy( &(buff[11]), &(pack->gyro_z), sizeof(int16_t) );
-	uint8_t chk_sum = generate_checksum( buff, 13);
-	//memcpy( &(buff[13]), &chk_sum, sizeof(uint8_t) );
+	uint8_t chk_sum = generate_checksum( buff, COMM_PACKET_SIZE-1);
+
 	buff[13] = chk_sum;
-	memcpy( TxBuffer, buff , 14);
+	memcpy( TxBuffer, buff , COMM_PACKET_SIZE);
 }
 int main(void)
 {
 	int16_t buff[6];
-	uint8_t bin_buff[14];
+	uint8_t bin_buff[COMM_PACKET_SIZE];
 	comm_packet imu_comm;
 	imu_comm.header = (uint8_t)'I';
 	init_led();

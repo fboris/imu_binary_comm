@@ -7,4 +7,8 @@ typedef struct comm_packet{
 	uint8_t header;
 	uint8_t check_sum;
 } comm_packet;
+#define COMM_PACKET_SIZE 14
+uint8_t TxBuffer[COMM_PACKET_SIZE];
+
+
 #endif

@@ -6,7 +6,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <stddef.h>
-uint8_t TxBuffer[14];
+#include "comm.h"
+
 
 void init_usart1()
 {
@@ -59,7 +60,7 @@ void init_usart1()
 	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART1->DR;
 	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)TxBuffer;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-	DMA_InitStructure.DMA_BufferSize = 14;
+	DMA_InitStructure.DMA_BufferSize = COMM_PACKET_SIZE;
 	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
 	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
