@@ -88,7 +88,7 @@ void *memcpy(void *dest, const void *src, size_t n)
 
         return ret;
 }
-void generate_package(comm_package* pack, uint8_t* buff)
+void generate_packet(comm_packet* pack, uint8_t* buff)
 {
 	memcpy( &(buff[0]), &(pack->acc_x), sizeof(int16_t) );
 	memcpy( &(buff[2]), &(pack->acc_y), sizeof(int16_t) );
@@ -103,7 +103,7 @@ int main(void)
 {
 	int16_t buff[6];
 	uint8_t bin_buff[13];
-	comm_package imu_comm;
+	comm_packet imu_comm;
 	imu_comm.header = (uint8_t)'I';
 	init_led();
 	init_usart1();
@@ -127,7 +127,7 @@ int main(void)
 		imu_comm.gyro_x = buff[3]-GYRO_X_OFFSET;
 		imu_comm.gyro_y = buff[4]-GYRO_Y_OFFSET;
 		imu_comm.gyro_z = buff[5]-GYRO_Z_OFFSET;
-		generate_package( &imu_comm, &bin_buff[0]);
+		generate_packet( &imu_comm, &bin_buff[0]);
 		for (int i = 0 ; i<13 ; i++)
 			send_byte( bin_buff[i] );
 		gpio_toggle(GPIOA, GPIO_Pin_0);
