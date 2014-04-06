@@ -70,15 +70,15 @@ void init_usart1()
 	DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 	DMA_Init(DMA1_Channel4, &DMA_InitStructure);
 	
-
- 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+}
+void enable_dma_usart1()
+{
+	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
  	DMA_Cmd(DMA1_Channel4, ENABLE);
 	/* Enable the RS232 port. */
 	USART_Cmd(USART1, ENABLE);
 	while (DMA_GetFlagStatus(DMA1_FLAG_TC4) == RESET){
 	}
-
-
 }
 void send_byte(uint8_t b)
 {

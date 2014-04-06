@@ -122,6 +122,7 @@ int main(void)
 	MPU6050_I2C_Init();
 	MPU6050_Initialize();
 	init_tim2();
+	enable_dma_usart1();
 	if( MPU6050_TestConnection() == TRUE)
 	{
 	   puts("connection success\r\n");
