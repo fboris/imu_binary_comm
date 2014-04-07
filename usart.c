@@ -7,14 +7,14 @@
 #include <ctype.h>
 #include <stddef.h>
 #include "comm.h"
-
+DMA_InitTypeDef DMA_InitStructure;
 
 void init_usart1()
 {
 
 	USART_InitTypeDef USART_InitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
-	DMA_InitTypeDef DMA_InitStructure;
+	
 
 	/* Enable peripheral clocks. */
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
@@ -53,7 +53,7 @@ void init_usart1()
 	/* USARTy_Tx_DMA_Channel (triggered by USARTy Tx event) Config */
 	DMA_DeInit(DMA1_Channel4);
 	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&USART1->DR;
-	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)TxBuffer;
+	DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)TX_BUFFER_1;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
 	DMA_InitStructure.DMA_BufferSize = COMM_PACKET_SIZE;
 	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -73,6 +73,7 @@ void enable_dma_usart1()
  	DMA_Cmd(DMA1_Channel4, ENABLE);
 	/* Enable the RS232 port. */
 	USART_Cmd(USART1, ENABLE);
+	CURR_DOUBLE_BUFF = BUFF_2;
 	while (DMA_GetFlagStatus(DMA1_FLAG_TC4) == RESET){
 	}
 }

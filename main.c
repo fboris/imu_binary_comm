@@ -12,7 +12,7 @@ extern int16_t GYRO_Z_OFFSET;
 extern int16_t ACC_X_OFFSET;
 extern int16_t ACC_Y_OFFSET;
 extern int16_t ACC_Z_OFFSET;
-extern uint8_t TxBuffer[COMM_PACKET_SIZE];
+
 void delay_ms(uint32_t delay_count)
 {	
 	GLOBAL_DELAY_COUNT = delay_count;
@@ -109,7 +109,16 @@ void generate_packet(comm_packet* pack, uint8_t* buff)
 	uint8_t chk_sum = generate_checksum( buff, COMM_PACKET_SIZE-1);
 
 	buff[13] = chk_sum;
-	memcpy( TxBuffer, buff , COMM_PACKET_SIZE);
+}
+void transmit_packet(uint8_t* buff)
+{
+	if (CURR_DOUBLE_BUFF == BUFF_1){
+		memcpy( TX_BUFFER_1, buff, COMM_PACKET_SIZE);
+		
+	} else if (CURR_DOUBLE_BUFF == BUFF_2){
+		memcpy( TX_BUFFER_2, buff, COMM_PACKET_SIZE);
+	
+	}
 }
 int main(void)
 {
@@ -141,6 +150,7 @@ int main(void)
 		imu_comm.gyro_y = buff[4]-GYRO_Y_OFFSET;
 		imu_comm.gyro_z = buff[5]-GYRO_Z_OFFSET;
 		generate_packet( &imu_comm, &bin_buff[0]);
+		transmit_packet( bin_buff);
 		delay_ms(1);
 		gpio_toggle(GPIOA, GPIO_Pin_0);
 		gpio_toggle(GPIOA, GPIO_Pin_1);

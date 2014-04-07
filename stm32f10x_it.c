@@ -23,7 +23,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
-
+#include "comm.h"
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
   */
@@ -39,6 +39,7 @@
 /*            Cortex-M3 Processor Exceptions Handlers                         */
 /******************************************************************************/
 extern uint32_t GLOBAL_DELAY_COUNT;
+extern DMA_InitTypeDef DMA_InitStructure;
 void TIM2_IRQHandler()
 {
         if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET){
@@ -163,6 +164,19 @@ void DMA1_Channel4_IRQHandler()
 {
   if (DMA_GetFlagStatus(DMA1_FLAG_TC4) != RESET){
      DMA_ClearITPendingBit(DMA1_IT_TC4);
+     if( CURR_DOUBLE_BUFF == BUFF_1 ) {
+      //set buffer1 as dma buffer
+      DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)TX_BUFFER_1;
+      DMA_Init(DMA1_Channel4, &DMA_InitStructure);
+      CURR_DOUBLE_BUFF = BUFF_2;
+
+     } else if( CURR_DOUBLE_BUFF == BUFF_2 ) {
+      //set buffer2 as dma buffer
+      DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)TX_BUFFER_2;
+      DMA_Init(DMA1_Channel4, &DMA_InitStructure);
+      CURR_DOUBLE_BUFF = BUFF_1;
+
+     }
   }
 }
 
