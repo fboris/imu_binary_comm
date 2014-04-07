@@ -159,6 +159,11 @@ void SysTick_Handler(void)
 /**
   * @}
   */
-
+void DMA1_Channel4_IRQHandler()
+{
+  if (DMA_GetFlagStatus(DMA1_FLAG_TC4) != RESET){
+     DMA_ClearITPendingBit(DMA1_IT_TC4);
+  }
+}
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

@@ -43,13 +43,8 @@ void init_usart1()
 
 	NVIC_InitTypeDef NVIC_InitStructure;
 
-	/* Enable transmit and receive interrupts for the USART2. */
-	USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-
-	/* Enable the USART1 IRQ in the NVIC module (so that the USART1 interrupt
-	 * handler is enabled). */
-	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel4_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
@@ -73,6 +68,7 @@ void init_usart1()
 }
 void enable_dma_usart1()
 {
+	DMA_ITConfig(DMA1_Channel4, DMA_IT_TC, ENABLE); 
 	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
  	DMA_Cmd(DMA1_Channel4, ENABLE);
 	/* Enable the RS232 port. */
